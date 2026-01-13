@@ -3,23 +3,42 @@ package com.example.shoppeclonee.viewmodel.provider
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.example.shoppeclonee.modeldata.CartItem
+import com.example.shoppeclonee.repositori.AuthRepository
 import com.example.shoppeclonee.repositori.CartRepository
 import kotlinx.coroutines.launch
 
 class CartViewModel(
-    private val repo: CartRepository = CartRepository()
-) : ViewModel() {
+    private val repo: CartRepository = CartRepository(),
+    private val authVM: AuthViewModel = AuthViewModel()) : ViewModel() {
 
     val cartItems = mutableStateOf<List<CartItem>>(emptyList())
     val message = mutableStateOf("")
+    val cart = mutableStateOf<List<CartItem>>(emptyList())
 
     fun loadCart(token: String) = viewModelScope.launch {
         cartItems.value = repo.getCart(token)
     }
 
-    fun addToCart(token: String, productId: Int) = viewModelScope.launch {
-        repo.addToCart(token, productId, 1)
-        loadCart(token)
+    fun addToCart(productId: Int) = viewModelScope.launch {
+        val token = authVM.token.value ?: return@launch
+        repo.addToCart(token, productId)
+        loadCart()
+    }
+
+    fun loadCart() = viewModelScope.launch {
+        val token = authVM.token.value ?: return@launch
+        cart.value = repo.getCart(token).data ?: emptyList()
+    }
+
+    fun getCart() {
+        viewModelScope.launch {
+            try {
+                val token = authVM.token.value ?: return@launch
+                cart.value = repo.getCart(token)
+            } catch (e: Exception) {
+                cart.value = emptyList()
+            }
+        }
     }
 
     fun remove(token: String, id: Int) = viewModelScope.launch {

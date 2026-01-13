@@ -9,6 +9,8 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.*
+
 
 // ================= RESPONSE =================
 
@@ -17,6 +19,11 @@ data class BaseResponse(
     val message: String,
     val token: String?, // 🔥 WAJIB
     val user: User?
+)
+
+data class ProductResponse(
+    val msg: String,
+    val data: Product?
 )
 
 data class LoginResponse(
@@ -44,6 +51,9 @@ interface ServiceApiUser {
     suspend fun getUser(
         @Path("id") id: Int
     ): User
+}
+
+interface ServiceApiProduct {
 
     @GET("api/products")
     suspend fun getProducts(): List<Product>
@@ -51,7 +61,7 @@ interface ServiceApiUser {
     @GET("api/products/{id}")
     suspend fun getProductById(
         @Path("id") id: Int
-    ): Product
+    ): ProductResponse
 
     @POST("api/products")
     suspend fun createProduct(
@@ -60,7 +70,7 @@ interface ServiceApiUser {
     ): BaseResponse
 
     @GET("api/products")
-    suspend fun getAllProducts(): List<Product>
+    suspend fun getAllProducts(): ProductResponse
 
     @PUT("api/products/{id}")
     suspend fun updateProduct(

@@ -9,21 +9,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ContainerApp private constructor() {
 
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:3000/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-    // ===== API SERVICE =====
-    val userApi: ServiceApiUser by lazy {
+    val userApi: ServiceApiUser =
         retrofit.create(ServiceApiUser::class.java)
-    }
 
-    val productApi: ServiceApiUser by lazy {
+    val productApi: ServiceApiUser =
         retrofit.create(ServiceApiUser::class.java)
-    }
 
     val cartApi: ServiceApiCart by lazy {
         retrofit.create(ServiceApiCart::class.java)
@@ -41,3 +36,6 @@ class ContainerApp private constructor() {
         val instance: ContainerApp by lazy { ContainerApp() }
     }
 }
+
+
+

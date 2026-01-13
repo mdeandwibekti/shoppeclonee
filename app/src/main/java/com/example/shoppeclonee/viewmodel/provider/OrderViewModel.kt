@@ -11,16 +11,38 @@ class OrderViewModel(
     private val repo: OrderRepository = OrderRepository()
 ) : ViewModel() {
 
-    val orders = mutableStateOf<List<Order>>(emptyList())
-    val message = mutableStateOf("")
+    var orders = mutableStateOf<List<Order>>(emptyList())
+        private set
+    var order = mutableStateOf<Order?>(null)
+        private set
 
-    fun loadOrders(token: String) = viewModelScope.launch {
-        orders.value = repo.getOrders(token)
+    var message = mutableStateOf("")
+        private set
+
+    fun loadOrders(token: String) {
+        viewModelScope.launch {
+            val res = repo.getOrders(token)
+            orders.value = res.data ?: emptyList()
+        }
     }
+
+
+    fun createOrder(token: String) {
+        viewModelScope.launch {
+            try {
+                val res = repo.createOrder(token)
+                message.value = res.message} catch (e: Exception) {
+                message.value = "Gagal membuat order"
+            }
+        }
+    }
+
+
 
     fun checkout(token: String) = viewModelScope.launch {
         val res = repo.createOrder(token)
         message.value = res.message
     }
+
 }
 

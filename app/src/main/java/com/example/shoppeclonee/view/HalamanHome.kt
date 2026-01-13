@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import com.example.shoppeclonee.repositori.ShoppeCloneApp
 import com.example.shoppeclonee.uicontroller.route.DestinasiCart
+import com.example.shoppeclonee.viewmodel.provider.AuthViewModel
 import com.example.shoppeclonee.viewmodel.provider.HomeViewModel
 import com.example.shoppeclonee.viewmodel.provider.CartViewModel
 
@@ -27,13 +28,24 @@ fun HalamanHome(
     navController: NavHostController,
     onProductClick: (Int) -> Unit,
     vm: HomeViewModel = viewModel(),
-    cartVM: CartViewModel = viewModel()
+    cartVM: CartViewModel = viewModel(),
+    authVm: AuthViewModel = viewModel(),
+    productVm: HomeViewModel = viewModel()
+
 ) {
 
     var searchText by remember { mutableStateOf("") }
 
+    val authVm: AuthViewModel = viewModel()
+    val token = authVm.user.value?: return
+
     LaunchedEffect(Unit) {
-        vm.loadProducts()
+        productVm.loadProducts()
+    }
+    LazyColumn {
+        items(productVm.products.value) { product ->
+            Text(product.name)
+        }
     }
 
     Scaffold(
@@ -156,10 +168,7 @@ fun HalamanHome(
                                 // ✅ FIX ERROR DI SINI
                                 Button(
                                     onClick = {
-                                        cartVM.addToCart(
-                                            productId = p.id,
-                                            qty = 1
-                                        )
+                                        cartVM.addToCart(p.id)
                                     },
                                     modifier = Modifier.fillMaxWidth(),
                                     contentPadding = PaddingValues(6.dp)
@@ -172,6 +181,7 @@ fun HalamanHome(
                                     Spacer(Modifier.width(4.dp))
                                     Text("Tambah")
                                 }
+
                             }
                         }
                     }

@@ -4,14 +4,25 @@ class CartRepository(
     private val container: ContainerApp = ContainerApp.instance
 ) {
 
+    private val api = ContainerApp.instance.cartApi
+
+
     suspend fun getCart(token: String) =
         container.cartApi.getCart(token)
 
-    suspend fun addToCart(token: String, productId: Int, qty: Int) =
-        container.cartApi.addToCart(
-            token,
-            mapOf("product_id" to productId, "qty" to qty)
+    suspend fun addToCart(
+        token: String,
+        productId: Int,
+        quantity: Int
+    ) {
+        api.addToCart(
+            token = "Bearer $token",
+            body = mapOf(
+                "product_id" to productId,
+                "quantity" to quantity
+            )
         )
+    }
 
     suspend fun updateQty(token: String, id: Int, qty: Int) =
         container.cartApi.updateQty(

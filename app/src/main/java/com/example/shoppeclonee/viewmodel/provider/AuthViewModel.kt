@@ -11,14 +11,16 @@ class AuthViewModel(
     private val repo: AuthRepository = AuthRepository()
 ) : ViewModel() {
 
+    var token = mutableStateOf<String?>(null)
+        private set
+
     var user = mutableStateOf<User?>(null)
         private set
 
     var message = mutableStateOf("")
         private set
 
-    var token = mutableStateOf<String?>(null)
-        private set
+
 
 
     fun login(email: String, password: String) {

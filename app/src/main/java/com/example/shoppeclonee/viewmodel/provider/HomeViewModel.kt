@@ -7,23 +7,14 @@ import com.example.shoppeclonee.repositori.ProductRepository
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
-
-
-
     private val repo = ProductRepository()
 
     val loading = MutableLiveData(false)
-    val products = MutableLiveData<List<Product>>()
+    val products = MutableLiveData<List<Product>>(emptyList())
     val message = MutableLiveData<String?>()
 
-    fun loadProducts() {
-        viewModelScope.launch {
-            try {
-                products.value = repo.getAllProducts()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    fun loadProducts() = viewModelScope.launch {
+        products.value = repo.getAllProducts()
     }
 
 }

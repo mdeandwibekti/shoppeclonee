@@ -1,22 +1,37 @@
 package com.example.shoppeclonee.viewmodel.provider
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.example.shoppeclonee.modeldata.Product
 import com.example.shoppeclonee.repositori.ProductRepository
 import kotlinx.coroutines.launch
 
-class ProductViewModel : ViewModel() {
+class ProductViewModel(
+    private val repo: ProductRepository = ProductRepository()
+) : ViewModel() {
 
-
-    private val repo = ProductRepository()
+    val products = mutableStateOf<List<Product>>(emptyList())val message = mutableStateOf("")
 
     // sementara (nanti ambil dari AuthViewModel)
     private val token = "Bearer TOKEN_LOGIN_KAMU"
-
     val loading = MutableLiveData(false)
-    val products = MutableLiveData<List<Product>>()
     val product = MutableLiveData<Product?>()
-    val message = MutableLiveData<String?>()
+
+
+    fun loadProducts() = viewModelScope.launch {
+        products.value = repo.getAllProducts()
+    }
+
+    fun addProduct(
+        token: String,
+        name: String,
+        price: Int,
+        stock: Int,
+        description: String
+    ) = viewModelScope.launch {
+        repo.createProduct(token, name, price, stock, description)
+        loadProducts()
+    }
 
     fun getProducts() {
         viewModelScope.launch {
@@ -48,17 +63,6 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-
-    fun addProduct(body: Map<String, Any?>) {
-        viewModelScope.launch {
-            try {
-                message.value = repo.addProduct(token, body as Map<String, Any>).message
-                getProducts() // 🔥 refresh home
-            } catch (e: Exception) {
-                message.value = e.message
-            }
-        }
-    }
 
     fun updateProduct(id: Int, body: Map<String, Any?>) {
         viewModelScope.launch {

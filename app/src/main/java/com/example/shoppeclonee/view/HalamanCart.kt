@@ -34,12 +34,13 @@ fun HalamanCart(
         ) {
 
             LazyColumn {
-                items(vm.cart.value ?: emptyList()) { item ->
+                items(vm.cart.value) { item ->
                     Text(
                         text = "Produk ID: ${item.product_id} x${item.quantity}"
                     )
                 }
             }
+
 
             Button(
                 onClick = onCheckout

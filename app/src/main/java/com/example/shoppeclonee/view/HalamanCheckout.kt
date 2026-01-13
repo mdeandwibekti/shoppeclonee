@@ -31,6 +31,7 @@ fun HalamanCheckout(
 
     // 🔧 sementara harga dummy
     val total = cartItems.sumOf { it.quantity * 10000 }
+    val orderVM: OrderViewModel = viewModel()
 
     Scaffold(
         topBar = { TopAppBarLokalku("Checkout", onBack) }
@@ -65,18 +66,10 @@ fun HalamanCheckout(
 
             Button(
                 onClick = {
-                    orderVm.createOrder(
-                        mapOf(
-                            "user_id" to userId,
-                            "total_price" to total,
-                            "status" to "pending"
-                        )
-                    )
-                    onOrderCreated()
-                },
-                modifier = Modifier.fillMaxWidth()
+                    orderVM.createOrder(token = "dummy")
+                }
             ) {
-                Text("Buat Pesanan")
+                Text("Buat Order")
             }
 
             orderVm.message.value?.let {

@@ -1,14 +1,28 @@
 package com.example.shoppeclonee.repositori
 
-class ProductRepository(
-    private val container: ContainerApp = ContainerApp.instance
-) {
+import com.example.shoppeclonee.apiservice.BaseResponse
+import com.example.shoppeclonee.apiservice.ProductResponse
+import com.example.shoppeclonee.apiservice.ServiceApiProduct
+import com.example.shoppeclonee.modeldata.Product
 
-    suspend fun getProducts() =
-        container.productApi.getProducts()
+class ProductRepository {
 
-    suspend fun getProductById(id: Int) =
-        container.productApi.getProductById(id)
+    private val api = ContainerApp.instance.productApi
+
+    suspend fun getAllProducts(): List<Product> {
+        return api.getAllProducts().data
+    }
+
+    suspend fun getProductById(id: Int): Product {
+        return api.getProductById(id).data
+    }
+
+    /* =============================
+       ===== GET ALL PRODUCTS ======
+       ============================= */
+    suspend fun getProducts(): List<Product> {
+        return api.getProduct()
+    }
 
     suspend fun createProduct(
         token: String,
@@ -16,9 +30,9 @@ class ProductRepository(
         price: Int,
         stock: Int,
         description: String
-    ) = container.productApi.createProduct(
-        token = "Bearer $token",
-        body = mapOf(
+    ) = api.createProduct(
+        "Bearer $token",
+        mapOf(
             "name" to name,
             "price" to price,
             "stock" to stock,
@@ -26,29 +40,24 @@ class ProductRepository(
         )
     )
 
-    suspend fun getAllProducts() =
-        container.productApi.getAllProducts()
-
-    suspend fun addProduct(
-        token: String,
-        body: Map<String, Any>
-    ) = container.productApi.createProduct(token, body)
-
-
     suspend fun updateProduct(
         token: String,
         id: Int,
-        body: Map<String, Any?>
-    ) =
-        container.productApi.updateProduct(
-            token = token,
-            id = id,
-            body = body
+        name: String,
+        price: Int,
+        stock: Int,
+        description: String
+    ) = api.updateProduct(
+        "Bearer $token",
+        id,
+        mapOf(
+            "name" to name,
+            "price" to price,
+            "stock" to stock,
+            "description" to description
         )
+    )
 
     suspend fun deleteProduct(token: String, id: Int) =
-        container.productApi.deleteProduct(
-            token = token,
-            id = id
-        )
+        api.deleteProduct("Bearer $token", id)
 }
